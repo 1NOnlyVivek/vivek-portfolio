@@ -1,22 +1,29 @@
 // @ts-nocheck
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import ReactPlayer from "react-player";
 
 export default function VideoModal({ selectedProject, setSelectedProject }: any) {
   
-  // 1. Grab the URL and force it to be safe
-  const rawUrl = selectedProject?.videoUrl || "";
-  const safeUrl = rawUrl.startsWith("http") ? rawUrl : `https://${rawUrl}`;
+  // 1. Clean the URL (removes invisible spaces from copy/pasting)
+  const rawUrl = selectedProject?.videoUrl?.trim() || "";
+  const safeUrl = rawUrl.startsWith("http") ? rawUrl : (rawUrl ? `https://${rawUrl}` : "");
   
-  // 2. Detect the platform
+  // 2. Extract IDs for bulletproof native iframes
+  const getYouTubeId = (url: string) => {
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
+    return match ? match[1] : null;
+  };
+  
+  const ytId = getYouTubeId(safeUrl);
+  const isYouTube = !!ytId;
+  
   const isVimeo = safeUrl.includes("vimeo.com");
-  const isYouTube = safeUrl.includes("youtube.com") || safeUrl.includes("youtu.be");
-  const isDrive = safeUrl.includes("drive.google.com");
-  const isInstagram = safeUrl.includes("instagram.com");
+  const vimeoId = isVimeo ? safeUrl.split("/").pop()?.split("?")[0] : null; 
   
-  // 3. If it's Drive, IG, or a generic link that isn't YT/Vimeo, we require external viewing
-  const requiresExternalViewing = isDrive || isInstagram || (!isYouTube && !isVimeo && !safeUrl.endsWith('.mp4'));
+  const isMp4 = safeUrl.endsWith(".mp4");
+
+  // 3. If it's Drive, IG, or a link we can't embed, force external viewing
+  const requiresExternalViewing = !isYouTube && !isVimeo && !isMp4;
 
   return (
     <AnimatePresence>
@@ -56,28 +63,34 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
                       This video is hosted on a platform that blocks embedded playback. Please use the secure link below to view the original video.
                     </p>
                   </div>
-                ) : isVimeo ? (
+                ) : isYouTube ? (
                   <iframe
-                    src={`https://player.vimeo.com/video/${safeUrl.split("/").pop()}?autoplay=1&loop=1&autopause=0`}
+                    src={`https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0`}
                     width="100%"
                     height="100%"
                     frameBorder="0"
-                    scrolling="no"
-                    allow="encrypted-media"
-                    className="absolute top-0 left-0 w-full h-full bg-white"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute top-0 left-0 w-full h-full bg-black"
                   ></iframe>
-                ) : (
-                  <>
-                    {/* @ts-ignore */}
-                    <ReactPlayer
-                      url={safeUrl}
-                      width="100%"
-                      height="100%"
-                      playing={true}
-                      controls={true}
-                    />
-                  </>
-                )
+                ) : isVimeo ? (
+                  <iframe
+                    src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&loop=1&autopause=0`}
+                    width="100%"
+                    height="100%"
+                    frameBorder="0"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowFullScreen
+                    className="absolute top-0 left-0 w-full h-full bg-black"
+                  ></iframe>
+                ) : isMp4 ? (
+                  <video 
+                    src={safeUrl} 
+                    controls 
+                    autoPlay 
+                    className="w-full h-full bg-black object-contain"
+                  />
+                ) : null
               ) : (
                 <div className="flex items-center justify-center w-full h-full text-zinc-500">
                   No video URL provided.
