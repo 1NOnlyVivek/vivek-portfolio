@@ -5,12 +5,18 @@ import ReactPlayer from "react-player";
 
 export default function VideoModal({ selectedProject, setSelectedProject }: any) {
   
-  // 1. Grab the URL and force it to be safe (Autocorrect missing https://)
+  // 1. Grab the URL and force it to be safe
   const rawUrl = selectedProject?.videoUrl || "";
   const safeUrl = rawUrl.startsWith("http") ? rawUrl : `https://${rawUrl}`;
   
-  // 2. Check if it is Vimeo
-  const isVimeo = safeUrl.includes("vimeo");
+  // 2. Detect the platform
+  const isVimeo = safeUrl.includes("vimeo.com");
+  const isYouTube = safeUrl.includes("youtube.com") || safeUrl.includes("youtu.be");
+  const isDrive = safeUrl.includes("drive.google.com");
+  const isInstagram = safeUrl.includes("instagram.com");
+  
+  // 3. If it's Drive, IG, or a generic link that isn't YT/Vimeo, we require external viewing
+  const requiresExternalViewing = isDrive || isInstagram || (!isYouTube && !isVimeo && !safeUrl.endsWith('.mp4'));
 
   return (
     <AnimatePresence>
@@ -42,7 +48,15 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
             {/* Video Container */}
             <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-inner flex-shrink-0">
               {rawUrl ? (
-                isVimeo ? (
+                requiresExternalViewing ? (
+                  <div className="flex flex-col items-center justify-center w-full h-full bg-[#050b14] border-inner border-white/5 text-center p-6">
+                    <svg className="w-16 h-16 mb-4 opacity-30 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                    <p className="text-sm font-bold tracking-widest uppercase mb-2 text-white">External Video Link</p>
+                    <p className="text-xs max-w-sm leading-relaxed text-gray-500">
+                      This video is hosted on a platform that blocks embedded playback. Please use the secure link below to view the original video.
+                    </p>
+                  </div>
+                ) : isVimeo ? (
                   <iframe
                     src={`https://player.vimeo.com/video/${safeUrl.split("/").pop()}?autoplay=1&loop=1&autopause=0`}
                     width="100%"
@@ -78,7 +92,7 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
                   href={safeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold tracking-widest uppercase rounded-full transition-colors border border-white/10 flex items-center gap-2"
+                  className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold tracking-widest uppercase rounded-full transition-colors border border-white/10 flex items-center gap-2 shadow-lg"
                 >
                   Watch Original Video <span className="text-lg leading-none">↗</span>
                 </a>
