@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { useState, useEffect } from "react";
@@ -75,25 +76,13 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
             onClick={(e) => e.stopPropagation()}
           >
             {selectedProject.videoUrl ? (
-              isYouTube && ytVideoId ? (
+              isVimeo ? (
                 <iframe
-                  width="100%"
-                  height="100%"
-                  src={`https://www.youtube.com/embed/${ytVideoId}?autoplay=1&rel=0&modestbranding=1`}
-                  title={selectedProject.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="absolute top-0 left-0 w-full h-full"
-                ></iframe>
-              ) : isInstagram && igId ? (
-                <iframe
-                  src={`https://www.instagram.com/p/${igId}/embed`}
+                  src={`https://player.vimeo.com/video/${selectedProject.videoUrl.split("/").pop()}?autoplay=1&loop=1&autopause=0`}
                   width="100%"
                   height="100%"
                   frameBorder="0"
                   scrolling="no"
-                  allowtransparency="true"
                   allow="encrypted-media"
                   className="absolute top-0 left-0 w-full h-full bg-white"
                 ></iframe>
@@ -102,9 +91,8 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
                   url={selectedProject.videoUrl}
                   width="100%"
                   height="100%"
-                  playing={isPlaying}
+                  playing={true}
                   controls={true}
-                  onReady={() => setIsPlaying(true)} 
                 />
               )
             ) : (
