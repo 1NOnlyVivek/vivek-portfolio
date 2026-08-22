@@ -200,9 +200,11 @@ export default function HomeClient({ projects }: { projects: any[] }) {
               <span className="text-3xl md:text-5xl font-bold text-gray-500 tracking-widest font-impact">2026</span>
             </motion.div>
             
-            <motion.div variants={fadeUp} className="flex items-center gap-3 mt-4 text-sm tracking-[0.2em] uppercase font-bold bg-white/5 px-4 py-2 border border-white/10 rounded-sm">
-              <div className="w-2 h-2 bg-white"></div>
-              VIDEO EDITOR & CREATOR
+            <motion.div variants={fadeUp} className="flex flex-col md:flex-row md:items-baseline gap-0 md:gap-4 overflow-visible">
+              <h1 className="text-5xl sm:text-6xl md:text-9xl font-black text-white tracking-tighter uppercase font-impact leading-none">
+                PORTFOLIO
+              </h1>
+              <span className="text-2xl sm:text-3xl md:text-5xl font-bold text-gray-500 tracking-widest font-impact mt-1 md:mt-0">2026</span>
             </motion.div>
             
             <motion.div variants={fadeUp} className="flex flex-col gap-4 mt-16 text-left w-full md:w-auto text-xs tracking-[0.3em] font-bold text-gray-400">
@@ -395,12 +397,16 @@ export default function HomeClient({ projects }: { projects: any[] }) {
           className="grid grid-cols-1 md:grid-cols-2 gap-16 w-full max-w-6xl items-center relative z-10"
         >
           
-          <motion.div variants={imageReveal} className="relative flex items-center justify-center md:justify-start">
-            <div className="w-56 h-56 md:w-72 md:h-72 rounded-full overflow-hidden border-4 border-[#020d18] shadow-2xl relative z-10">
+          <motion.div variants={imageReveal} className="relative flex flex-col md:flex-row items-center justify-center md:justify-start w-full">
+            
+            {/* Profile Image */}
+            <div className="w-56 h-56 md:w-72 md:h-72 rounded-full overflow-hidden border-4 border-[#020d18] shadow-2xl relative z-10 mb-8 md:mb-0">
               <img src="/your-portrait.png" alt="Profile" className="w-full h-full object-cover" />
             </div>
             
-            <div className="absolute left-[50%] md:left-[60%] flex flex-col justify-center gap-3 z-20">
+            {/* Social Links (Stacks below on mobile, overlaps on desktop) */}
+            <div className="relative md:absolute md:left-[60%] flex flex-col items-start justify-center gap-3 z-20 w-max mx-auto md:mx-0">
+              
               {/* Instagram */}
               <a href="https://www.instagram.com/vivek.bhimajiyani/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-xs font-bold tracking-widest text-white hover:scale-105 transition-transform md:-ml-6 bg-[#020d18]/80 pr-4 rounded-full backdrop-blur-sm">
                 <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-black shadow-lg">
