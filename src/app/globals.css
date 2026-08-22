@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  /* Custom Colors */
+  --color-glow-green: #00FF66;
+  --color-glow-dark: #051A0E;
+  --color-glow-accent: #10B981;
+  --color-obsidian: #0A0D0B;
+  
+  /* Custom Liquid Glass & Neon Shadows */
+  --shadow-neon: 0 0 20px rgba(0, 255, 102, 0.4), 0 0 40px rgba(0, 255, 102, 0.2);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 255, 102, 0.1);
+}
+
+/* Set the default dark background for the whole site */
+body {
+  background-color: var(--color-obsidian);
+  color: #ffffff;
+}
