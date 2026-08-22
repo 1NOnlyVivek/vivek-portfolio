@@ -4,8 +4,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import ReactPlayer from "react-player";
 
 export default function VideoModal({ selectedProject, setSelectedProject }: any) {
-  // Check if the URL is from Vimeo to use the custom iframe
-  const isVimeo = selectedProject?.videoUrl?.includes("vimeo");
+  
+  // 1. Grab the URL and force it to be safe (Autocorrect missing https://)
+  const rawUrl = selectedProject?.videoUrl || "";
+  const safeUrl = rawUrl.startsWith("http") ? rawUrl : `https://${rawUrl}`;
+  
+  // 2. Check if it is Vimeo
+  const isVimeo = safeUrl.includes("vimeo");
 
   return (
     <AnimatePresence>
@@ -36,10 +41,10 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
 
             {/* Video Container */}
             <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-inner flex-shrink-0">
-              {selectedProject.videoUrl ? (
+              {rawUrl ? (
                 isVimeo ? (
                   <iframe
-                    src={`https://player.vimeo.com/video/${selectedProject.videoUrl.split("/").pop()}?autoplay=1&loop=1&autopause=0`}
+                    src={`https://player.vimeo.com/video/${safeUrl.split("/").pop()}?autoplay=1&loop=1&autopause=0`}
                     width="100%"
                     height="100%"
                     frameBorder="0"
@@ -51,7 +56,7 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
                   <>
                     {/* @ts-ignore */}
                     <ReactPlayer
-                      url={selectedProject.videoUrl}
+                      url={safeUrl}
                       width="100%"
                       height="100%"
                       playing={true}
@@ -67,10 +72,10 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
             </div>
 
             {/* --- SAFETY FALLBACK BUTTON --- */}
-            {selectedProject.videoUrl && (
+            {rawUrl && (
               <div className="mt-6 flex justify-center">
                 <a
-                  href={selectedProject.videoUrl.startsWith("http") ? selectedProject.videoUrl : `https://${selectedProject.videoUrl}`}
+                  href={safeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold tracking-widest uppercase rounded-full transition-colors border border-white/10 flex items-center gap-2"

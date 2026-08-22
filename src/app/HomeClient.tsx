@@ -119,7 +119,7 @@ export default function HomeClient({ projects }: { projects: any[] }) {
             animate={{ y: 24, opacity: 1, x: "-50%" }}
             exit={{ y: -100, opacity: 0, x: "-50%" }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="fixed top-0 left-1/2 z-[250] flex space-x-2 md:space-x-8 bg-[#0a192f]/90 backdrop-blur-xl rounded-full px-6 py-2 text-[10px] md:text-xs font-bold tracking-widest uppercase border border-white/10 shadow-2xl"
+            className="fixed top-0 left-1/2 z-[250] flex items-center justify-center gap-2 md:gap-8 bg-[#0a192f]/90 backdrop-blur-xl rounded-full px-4 md:px-6 py-2 text-[10px] md:text-xs font-bold tracking-widest uppercase border border-white/10 shadow-2xl w-max max-w-[95vw]"
           >
             <a href="#about" className="hover:bg-white hover:text-black px-4 py-1 rounded-full transition-all text-white">PROFIL</a>
             <a href="#work" className="hover:bg-white hover:text-black text-gray-400 px-4 py-1 rounded-full transition-all">PROJECT</a>
@@ -170,7 +170,7 @@ export default function HomeClient({ projects }: { projects: any[] }) {
             variants={imageReveal} 
             className="relative w-64 h-64 md:w-96 md:h-96 flex-shrink-0 mt-12 md:mt-0"
           >
-            {/* LAYER 1: The Base & Bottom Mask (Locks the bottom half inside the curves) */}
+            {/* LAYER 1: The Base & Bottom Mask */}
             <div className="absolute inset-0 bg-[#800000] rounded-l-full rounded-r-xl shadow-2xl overflow-hidden flex justify-center">
               <img 
                 src="/your-portrait.png" 
@@ -179,7 +179,7 @@ export default function HomeClient({ projects }: { projects: any[] }) {
               />
             </div>
             
-            {/* LAYER 2: The 3D Pop-out (Slices the image in half so only the top breaks out) */}
+            {/* LAYER 2: The 3D Pop-out */}
             <div 
               className="absolute inset-0 flex justify-center pointer-events-none z-10"
               style={{ clipPath: "polygon(-100% -100%, 200% -100%, 200% 50%, -100% 50%)" }}
@@ -192,29 +192,22 @@ export default function HomeClient({ projects }: { projects: any[] }) {
             </div>
           </motion.div>
 
-          <div className="flex flex-col items-start md:ml-12 mt-10 md:mt-0">
-            <motion.div variants={fadeUp} className="flex items-baseline gap-4 overflow-hidden">
-              <h1 className="text-6xl md:text-9xl font-black text-white tracking-tighter uppercase font-impact">
-                PORTFOLIO
-              </h1>
-              <span className="text-3xl md:text-5xl font-bold text-gray-500 tracking-widest font-impact">2026</span>
-            </motion.div>
-            
-            <motion.div variants={fadeUp} className="flex flex-col md:flex-row md:items-baseline gap-0 md:gap-4 overflow-visible">
+          <div className="flex flex-col items-center md:items-start md:ml-12 mt-10 md:mt-0 w-full text-center md:text-left">
+            <motion.div variants={fadeUp} className="flex flex-col md:flex-row items-center md:items-baseline justify-center md:justify-start gap-0 md:gap-4 overflow-visible w-full">
               <h1 className="text-5xl sm:text-6xl md:text-9xl font-black text-white tracking-tighter uppercase font-impact leading-none">
                 PORTFOLIO
               </h1>
               <span className="text-2xl sm:text-3xl md:text-5xl font-bold text-gray-500 tracking-widest font-impact mt-1 md:mt-0">2026</span>
             </motion.div>
             
-            <motion.div variants={fadeUp} className="flex flex-col gap-4 mt-16 text-left w-full md:w-auto text-xs tracking-[0.3em] font-bold text-gray-400">
-              <button onClick={() => setIsSlideshowRunning(true)} className="hover:text-white hover:translate-x-2 transition-transform w-max text-left">
+            <motion.div variants={fadeUp} className="flex flex-col items-center md:items-start gap-4 mt-12 md:mt-16 w-full text-xs tracking-[0.3em] font-bold text-gray-400">
+              <button onClick={() => setIsSlideshowRunning(true)} className="hover:text-white md:hover:translate-x-2 transition-transform w-max">
                 START <span className="text-[10px] text-gray-600 ml-2 lowercase tracking-normal">(Slideshow)</span>
               </button>
-              <button onClick={() => setShowOptions(true)} className="hover:text-white hover:translate-x-2 transition-transform w-max text-left">
+              <button onClick={() => setShowOptions(true)} className="hover:text-white md:hover:translate-x-2 transition-transform w-max">
                 OPTIONS
               </button>
-              <a href="#contact" className="hover:text-white hover:translate-x-2 transition-transform w-max">
+              <a href="#contact" className="hover:text-white md:hover:translate-x-2 transition-transform w-max">
                 CONTACT
               </a>
             </motion.div>
@@ -227,11 +220,11 @@ export default function HomeClient({ projects }: { projects: any[] }) {
       ========================================= */}
       <section id="about" className="relative w-full min-h-screen flex flex-col items-center pt-32 px-6 overflow-hidden">
         
-        {/* Static Pill for initial layout */}
+        {/* Static Pill for initial layout (Centered perfectly) */}
         <motion.nav 
           initial={{ opacity: 1 }}
           animate={{ opacity: showStickyNav ? 0 : 1 }}
-          className="flex space-x-2 md:space-x-8 bg-[#0a192f] rounded-full px-6 py-2 mb-20 text-[10px] md:text-xs font-bold tracking-widest uppercase border border-white/10 shadow-xl z-20 pointer-events-none"
+          className="flex items-center justify-center gap-2 md:gap-8 bg-[#0a192f] rounded-full px-4 md:px-6 py-2 mx-auto mb-20 text-[10px] md:text-xs font-bold tracking-widest uppercase border border-white/10 shadow-xl z-20 pointer-events-none w-max max-w-[95vw]"
         >
           <span className="bg-white text-black px-4 py-1 rounded-full">PROFIL</span>
           <span className="text-gray-400 px-4 py-1">PROJECT</span>
@@ -338,9 +331,9 @@ export default function HomeClient({ projects }: { projects: any[] }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase font-impact mb-12"
+          className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase font-impact mb-12 text-center"
         >
-          RECAP PROJECT 2026 <span className="text-sm tracking-widest font-sans font-bold text-gray-500 align-middle">VIDEO EDITING</span>
+          RECAP PROJECT 2026 <span className="block md:inline text-sm tracking-widest font-sans font-bold text-gray-500 align-middle mt-2 md:mt-0">VIDEO EDITING</span>
         </motion.h2>
 
         <motion.div 
@@ -449,7 +442,7 @@ export default function HomeClient({ projects }: { projects: any[] }) {
             </div>
           </motion.div>
 
-          <div className="text-right flex flex-col justify-end mt-12 md:mt-0 font-impact tracking-tighter uppercase leading-[0.85]">
+          <div className="text-center md:text-right flex flex-col justify-end mt-12 md:mt-0 font-impact tracking-tighter uppercase leading-[0.85]">
             <motion.span variants={fadeUp} className="text-5xl md:text-8xl text-[#1a2b40] font-black drop-shadow-sm">LET'S</motion.span>
             <motion.span variants={fadeUp} className="text-5xl md:text-8xl text-[#1a2b40] font-black drop-shadow-sm">CREATE</motion.span>
             <motion.span variants={fadeUp} className="text-5xl md:text-8xl text-[#1a2b40] font-black drop-shadow-sm">SOMETHING</motion.span>
