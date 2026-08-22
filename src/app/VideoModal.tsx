@@ -4,13 +4,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function VideoModal({ selectedProject, setSelectedProject }: any) {
   
-  // 1. Clean the URL (removes invisible spaces from copy/pasting)
+  // 1. Clean the URL
   const rawUrl = selectedProject?.videoUrl?.trim() || "";
   const safeUrl = rawUrl.startsWith("http") ? rawUrl : (rawUrl ? `https://${rawUrl}` : "");
   
-  // 2. Extract IDs for bulletproof native iframes
+  // 2. Extract IDs for bulletproof native iframes (UPDATED TO INCLUDE SHORTS)
   const getYouTubeId = (url: string) => {
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
     return match ? match[1] : null;
   };
   
