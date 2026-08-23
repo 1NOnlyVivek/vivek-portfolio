@@ -8,15 +8,17 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
   const rawUrl = selectedProject?.videoUrl?.trim() || "";
   const safeUrl = rawUrl.startsWith("http") ? rawUrl : (rawUrl ? `https://${rawUrl}` : "");
   
-  // 2. Extract IDs for bulletproof native iframes
+  // 2. Extract IDs using a battle-tested YouTube Regex
   const getYouTubeId = (url: string) => {
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
-    return match ? match[1] : null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
+    const match = url.match(regExp);
+    // YouTube IDs are ALWAYS exactly 11 characters long. This prevents the homepage bug!
+    return (match && match[2].length === 11) ? match[2] : null;
   };
   
   const ytId = getYouTubeId(safeUrl);
   const isYouTube = !!ytId;
-  const isShort = safeUrl.includes("shorts/"); // Smart detection for vertical videos
+  const isShort = safeUrl.includes("shorts/"); 
   
   const isVimeo = safeUrl.includes("vimeo.com");
   const vimeoId = isVimeo ? safeUrl.split("/").pop()?.split("?")[0] : null; 
@@ -33,7 +35,8 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+          // FIX #1: Z-INDEX 999 forces the modal to sit ABOVE the top menu!
+          className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
           onClick={() => setSelectedProject(null)}
         >
           <motion.div
@@ -44,7 +47,7 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
             className="relative w-full max-w-5xl bg-[#020d18] border border-white/10 rounded-2xl p-4 md:p-6 shadow-2xl flex flex-col max-h-[95vh] overflow-y-auto"
           >
             
-            {/* Header with Title & Close Button (Prevents overlap!) */}
+            {/* Header with Title & Close Button */}
             <div className="flex justify-between items-start mb-4">
               <div className="pr-4">
                 <h3 className="text-2xl md:text-3xl font-black text-white font-impact tracking-wider">
@@ -62,7 +65,7 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
               </button>
             </div>
 
-            {/* Video Container (Dynamic Aspect Ratio for Shorts vs Normal) */}
+            {/* Video Container */}
             <div className={`relative bg-black rounded-xl overflow-hidden shadow-inner flex-shrink-0 ${isShort ? 'w-full max-w-sm mx-auto aspect-[9/16]' : 'w-full aspect-video'}`}>
               {rawUrl ? (
                 requiresExternalViewing ? (

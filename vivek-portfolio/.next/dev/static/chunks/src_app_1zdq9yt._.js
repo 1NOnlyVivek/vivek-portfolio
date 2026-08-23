@@ -1380,14 +1380,16 @@ function VideoModal({ selectedProject, setSelectedProject }) {
     // 1. Clean the URL
     const rawUrl = selectedProject?.videoUrl?.trim() || "";
     const safeUrl = rawUrl.startsWith("http") ? rawUrl : rawUrl ? `https://${rawUrl}` : "";
-    // 2. Extract IDs for bulletproof native iframes
+    // 2. Extract IDs using a battle-tested YouTube Regex
     const getYouTubeId = (url)=>{
-        const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
-        return match ? match[1] : null;
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
+        const match = url.match(regExp);
+        // YouTube IDs are ALWAYS exactly 11 characters long. This prevents the homepage bug!
+        return match && match[2].length === 11 ? match[2] : null;
     };
     const ytId = getYouTubeId(safeUrl);
     const isYouTube = !!ytId;
-    const isShort = safeUrl.includes("shorts/"); // Smart detection for vertical videos
+    const isShort = safeUrl.includes("shorts/");
     const isVimeo = safeUrl.includes("vimeo.com");
     const vimeoId = isVimeo ? safeUrl.split("/").pop()?.split("?")[0] : null;
     const isMp4 = safeUrl.endsWith(".mp4");
@@ -1404,7 +1406,8 @@ function VideoModal({ selectedProject, setSelectedProject }) {
             exit: {
                 opacity: 0
             },
-            className: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm",
+            // FIX #1: Z-INDEX 999 forces the modal to sit ABOVE the top menu!
+            className: "fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm",
             onClick: ()=>setSelectedProject(null),
             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
                 initial: {
@@ -1436,7 +1439,7 @@ function VideoModal({ selectedProject, setSelectedProject }) {
                                         children: selectedProject.title
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/VideoModal.tsx",
-                                        lineNumber: 50,
+                                        lineNumber: 53,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1444,13 +1447,13 @@ function VideoModal({ selectedProject, setSelectedProject }) {
                                         children: selectedProject.year
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/VideoModal.tsx",
-                                        lineNumber: 53,
+                                        lineNumber: 56,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/VideoModal.tsx",
-                                lineNumber: 49,
+                                lineNumber: 52,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1468,23 +1471,23 @@ function VideoModal({ selectedProject, setSelectedProject }) {
                                         d: "M6 18L18 6M6 6l12 12"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/VideoModal.tsx",
-                                        lineNumber: 60,
+                                        lineNumber: 63,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/VideoModal.tsx",
-                                    lineNumber: 59,
+                                    lineNumber: 62,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/VideoModal.tsx",
-                                lineNumber: 55,
+                                lineNumber: 58,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/VideoModal.tsx",
-                        lineNumber: 48,
+                        lineNumber: 51,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1504,12 +1507,12 @@ function VideoModal({ selectedProject, setSelectedProject }) {
                                         d: "M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/VideoModal.tsx",
-                                        lineNumber: 70,
+                                        lineNumber: 73,
                                         columnNumber: 129
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/VideoModal.tsx",
-                                    lineNumber: 70,
+                                    lineNumber: 73,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1517,7 +1520,7 @@ function VideoModal({ selectedProject, setSelectedProject }) {
                                     children: "External Video Link"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/VideoModal.tsx",
-                                    lineNumber: 71,
+                                    lineNumber: 74,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1525,13 +1528,13 @@ function VideoModal({ selectedProject, setSelectedProject }) {
                                     children: "This video is hosted on a platform that blocks embedded playback. Please use the secure link below to view the original video."
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/VideoModal.tsx",
-                                    lineNumber: 72,
+                                    lineNumber: 75,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/VideoModal.tsx",
-                            lineNumber: 69,
+                            lineNumber: 72,
                             columnNumber: 19
                         }, this) : isYouTube ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("iframe", {
                             src: `https://www.youtube.com/embed/${ytId}?rel=0&playsinline=1`,
@@ -1543,7 +1546,7 @@ function VideoModal({ selectedProject, setSelectedProject }) {
                             className: "absolute top-0 left-0 w-full h-full bg-black"
                         }, void 0, false, {
                             fileName: "[project]/src/app/VideoModal.tsx",
-                            lineNumber: 77,
+                            lineNumber: 80,
                             columnNumber: 19
                         }, this) : isVimeo ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("iframe", {
                             src: `https://player.vimeo.com/video/${vimeoId}?loop=1&autopause=0&playsinline=1`,
@@ -1555,7 +1558,7 @@ function VideoModal({ selectedProject, setSelectedProject }) {
                             className: "absolute top-0 left-0 w-full h-full bg-black"
                         }, void 0, false, {
                             fileName: "[project]/src/app/VideoModal.tsx",
-                            lineNumber: 87,
+                            lineNumber: 90,
                             columnNumber: 19
                         }, this) : isMp4 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("video", {
                             src: safeUrl,
@@ -1564,19 +1567,19 @@ function VideoModal({ selectedProject, setSelectedProject }) {
                             className: "w-full h-full bg-black object-contain"
                         }, void 0, false, {
                             fileName: "[project]/src/app/VideoModal.tsx",
-                            lineNumber: 97,
+                            lineNumber: 100,
                             columnNumber: 19
                         }, this) : null : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "flex items-center justify-center w-full h-full text-zinc-500",
                             children: "No video URL provided."
                         }, void 0, false, {
                             fileName: "[project]/src/app/VideoModal.tsx",
-                            lineNumber: 105,
+                            lineNumber: 108,
                             columnNumber: 17
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/VideoModal.tsx",
-                        lineNumber: 66,
+                        lineNumber: 69,
                         columnNumber: 13
                     }, this),
                     rawUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1593,18 +1596,18 @@ function VideoModal({ selectedProject, setSelectedProject }) {
                                     children: "↗"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/VideoModal.tsx",
-                                    lineNumber: 120,
+                                    lineNumber: 123,
                                     columnNumber: 40
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/VideoModal.tsx",
-                            lineNumber: 114,
+                            lineNumber: 117,
                             columnNumber: 17
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/VideoModal.tsx",
-                        lineNumber: 113,
+                        lineNumber: 116,
                         columnNumber: 15
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1615,7 +1618,7 @@ function VideoModal({ selectedProject, setSelectedProject }) {
                                 children: selectedProject.category
                             }, void 0, false, {
                                 fileName: "[project]/src/app/VideoModal.tsx",
-                                lineNumber: 127,
+                                lineNumber: 130,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1623,29 +1626,29 @@ function VideoModal({ selectedProject, setSelectedProject }) {
                                 children: selectedProject.description
                             }, void 0, false, {
                                 fileName: "[project]/src/app/VideoModal.tsx",
-                                lineNumber: 130,
+                                lineNumber: 133,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/VideoModal.tsx",
-                        lineNumber: 126,
+                        lineNumber: 129,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/VideoModal.tsx",
-                lineNumber: 39,
+                lineNumber: 42,
                 columnNumber: 11
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/app/VideoModal.tsx",
-            lineNumber: 32,
+            lineNumber: 34,
             columnNumber: 9
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/VideoModal.tsx",
-        lineNumber: 30,
+        lineNumber: 32,
         columnNumber: 5
     }, this);
 }
