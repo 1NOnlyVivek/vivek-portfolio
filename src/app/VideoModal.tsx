@@ -8,22 +8,10 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
   const rawUrl = selectedProject?.videoUrl?.trim() || "";
   const safeUrl = rawUrl.startsWith("http") ? rawUrl : (rawUrl ? `https://${rawUrl}` : "");
   
-  // 2. Extract ID manually to guarantee NO YouTube homepage bugs
-  const extractYtId = (url: string) => {
-    try {
-      if (url.includes("youtu.be/")) return url.split("youtu.be/")[1].split("?")[0].substring(0, 11);
-      if (url.includes("shorts/")) return url.split("shorts/")[1].split("?")[0].substring(0, 11);
-      if (url.includes("watch?v=")) return url.split("watch?v=")[1].split("&")[0].substring(0, 11);
-      if (url.includes("embed/")) return url.split("embed/")[1].split("?")[0].substring(0, 11);
-    } catch (e) {
-      return null;
-    }
-    return null;
-  };
-  
-  const ytId = extractYtId(safeUrl);
-  // ONLY mark as YouTube if we successfully grabbed exactly the 11-digit ID
-  const isYouTube = ytId && ytId.length === 11; 
+  // 2. The Safest Regex in the World (Guarantees exactly 11 characters, no slashes or queries)
+  const ytMatch = safeUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/);
+  const ytId = ytMatch ? ytMatch[1] : null;
+  const isYouTube = !!ytId;
   
   const isVimeo = safeUrl.includes("vimeo.com");
   const vimeoId = isVimeo ? safeUrl.split("/").pop()?.split("?")[0] : null; 
@@ -31,7 +19,7 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
   const isMp4 = safeUrl.endsWith(".mp4");
   const isShort = safeUrl.includes("shorts/") || safeUrl.includes("reel");
 
-  // 3. Fallback for Google Drive, IG, or broken links
+  // 3. Fallback for Drive, IG, or broken links
   const requiresExternalViewing = !isYouTube && !isVimeo && !isMp4;
 
   return (
@@ -41,7 +29,6 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          // FORCE Z-Index and FORCE the system cursor to reappear (cursor-auto)
           style={{ zIndex: 99999 }}
           className="fixed inset-0 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md cursor-auto"
           onClick={() => setSelectedProject(null)}
@@ -72,7 +59,7 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
               </button>
             </div>
 
-            {/* Video Container (Dynamic aspect ratio for Shorts vs Normal) */}
+            {/* Video Container */}
             <div className={`relative bg-black rounded-xl overflow-hidden shadow-inner flex-shrink-0 ${isShort ? 'w-full max-w-sm mx-auto aspect-[9/16]' : 'w-full aspect-video'}`}>
               {rawUrl ? (
                 requiresExternalViewing ? (
@@ -85,21 +72,22 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
                   </div>
                 ) : isYouTube ? (
                   <iframe
-                    src={`https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&playsinline=1`}
+                    // MOBILE FIX: Removed autoplay=1 so iOS doesn't panic and crash the frame
+                    src={`https://www.youtube.com/embed/${ytId}?rel=0&playsinline=1`}
                     width="100%"
                     height="100%"
                     frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                     className="absolute top-0 left-0 w-full h-full bg-black cursor-auto"
                   ></iframe>
                 ) : isVimeo ? (
                   <iframe
-                    src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&loop=1&autopause=0&playsinline=1`}
+                    src={`https://player.vimeo.com/video/${vimeoId}?loop=1&autopause=0&playsinline=1`}
                     width="100%"
                     height="100%"
                     frameBorder="0"
-                    allow="autoplay; fullscreen; picture-in-picture"
+                    allow="fullscreen; picture-in-picture"
                     allowFullScreen
                     className="absolute top-0 left-0 w-full h-full bg-black cursor-auto"
                   ></iframe>
