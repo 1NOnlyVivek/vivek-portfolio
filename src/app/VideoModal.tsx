@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import ReactPlayer from "react-player";
 
 export default function VideoModal({ selectedProject, setSelectedProject }: any) {
   
@@ -9,27 +8,30 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
   const rawUrl = selectedProject?.videoUrl?.trim() || "";
   const safeUrl = rawUrl.startsWith("http") ? rawUrl : (rawUrl ? `https://${rawUrl}` : "");
   
-  // 2. Extract exactly the 11-character YouTube ID
-  const getYouTubeId = (url: string) => {
-    if (!url) return null;
-    // This regex looks for exactly 11 letters/numbers after the slash
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-    return match ? match[1] : null;
+  // 2. Extract ID manually to guarantee NO YouTube homepage bugs
+  const extractYtId = (url: string) => {
+    try {
+      if (url.includes("youtu.be/")) return url.split("youtu.be/")[1].split("?")[0].substring(0, 11);
+      if (url.includes("shorts/")) return url.split("shorts/")[1].split("?")[0].substring(0, 11);
+      if (url.includes("watch?v=")) return url.split("watch?v=")[1].split("&")[0].substring(0, 11);
+      if (url.includes("embed/")) return url.split("embed/")[1].split("?")[0].substring(0, 11);
+    } catch (e) {
+      return null;
+    }
+    return null;
   };
   
-  const ytId = getYouTubeId(safeUrl);
-  const isYouTube = !!ytId; // Only true if we successfully grabbed the 11-digit ID
-  
-  // THE MAGIC TRICK: Force ReactPlayer to read Shorts as standard videos so it doesn't crash!
-  const playerUrl = isYouTube ? `https://www.youtube.com/watch?v=${ytId}` : safeUrl;
-  
-  // Detect vertical video formats for the layout shape
-  const isShort = safeUrl.includes("shorts/") || safeUrl.includes("reel"); 
+  const ytId = extractYtId(safeUrl);
+  // ONLY mark as YouTube if we successfully grabbed exactly the 11-digit ID
+  const isYouTube = ytId && ytId.length === 11; 
   
   const isVimeo = safeUrl.includes("vimeo.com");
+  const vimeoId = isVimeo ? safeUrl.split("/").pop()?.split("?")[0] : null; 
+  
   const isMp4 = safeUrl.endsWith(".mp4");
+  const isShort = safeUrl.includes("shorts/") || safeUrl.includes("reel");
 
-  // 3. Fallback for Google Drive, IG, or unrecognized links
+  // 3. Fallback for Google Drive, IG, or broken links
   const requiresExternalViewing = !isYouTube && !isVimeo && !isMp4;
 
   return (
@@ -39,8 +41,9 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          style={{ zIndex: 99999 }} // Locks it above the Nav menu
-          className="fixed inset-0 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md"
+          // FORCE Z-Index and FORCE the system cursor to reappear (cursor-auto)
+          style={{ zIndex: 99999 }}
+          className="fixed inset-0 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md cursor-auto"
           onClick={() => setSelectedProject(null)}
         >
           <motion.div
@@ -48,7 +51,7 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-5xl bg-[#020d18] border border-white/10 rounded-2xl p-4 md:p-6 shadow-2xl flex flex-col max-h-[95vh] overflow-y-auto"
+            className="relative w-full max-w-5xl bg-[#020d18] border border-white/10 rounded-2xl p-4 md:p-6 shadow-2xl flex flex-col max-h-[95vh] overflow-y-auto cursor-auto"
           >
             
             {/* Header with Title & Close Button */}
@@ -61,7 +64,7 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
               </div>
               <button
                 onClick={() => setSelectedProject(null)}
-                className="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors flex-shrink-0"
+                className="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors flex-shrink-0 cursor-pointer"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -69,7 +72,7 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
               </button>
             </div>
 
-            {/* Video Container (Vertical for Shorts, Horizontal for Standard) */}
+            {/* Video Container (Dynamic aspect ratio for Shorts vs Normal) */}
             <div className={`relative bg-black rounded-xl overflow-hidden shadow-inner flex-shrink-0 ${isShort ? 'w-full max-w-sm mx-auto aspect-[9/16]' : 'w-full aspect-video'}`}>
               {rawUrl ? (
                 requiresExternalViewing ? (
@@ -80,21 +83,34 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
                       This video is hosted on a platform that blocks embedded playback. Please use the secure link below to view the original video.
                     </p>
                   </div>
-                ) : (
-                  <ReactPlayer
-                    url={playerUrl}
+                ) : isYouTube ? (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&playsinline=1`}
                     width="100%"
                     height="100%"
-                    playing={false}
-                    controls={true}
-                    playsinline={true} // Prevents iOS from forcing it into fullscreen instantly
-                    config={{
-                      youtube: {
-                        playerVars: { playsinline: 1, modestbranding: 1, rel: 0 }
-                      }
-                    }}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute top-0 left-0 w-full h-full bg-black cursor-auto"
+                  ></iframe>
+                ) : isVimeo ? (
+                  <iframe
+                    src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&loop=1&autopause=0&playsinline=1`}
+                    width="100%"
+                    height="100%"
+                    frameBorder="0"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowFullScreen
+                    className="absolute top-0 left-0 w-full h-full bg-black cursor-auto"
+                  ></iframe>
+                ) : isMp4 ? (
+                  <video 
+                    src={safeUrl} 
+                    controls 
+                    playsInline
+                    className="w-full h-full bg-black object-contain cursor-auto"
                   />
-                )
+                ) : null
               ) : (
                 <div className="flex items-center justify-center w-full h-full text-zinc-500">
                   No video URL provided.
@@ -109,7 +125,7 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
                   href={safeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold tracking-widest uppercase rounded-full transition-colors border border-white/10 flex items-center gap-2 shadow-lg"
+                  className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold tracking-widest uppercase rounded-full transition-colors border border-white/10 flex items-center gap-2 shadow-lg cursor-pointer"
                 >
                   Watch Original Video <span className="text-lg leading-none">↗</span>
                 </a>

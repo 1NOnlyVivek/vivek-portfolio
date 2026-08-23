@@ -416,10 +416,6 @@
     pointer-events: none;
   }
 
-  .invisible {
-    visibility: hidden;
-  }
-
   .visible {
     visibility: visible;
   }
@@ -604,10 +600,6 @@
     display: none;
   }
 
-  .inline {
-    display: inline;
-  }
-
   .inline-block {
     display: inline-block;
   }
@@ -771,8 +763,16 @@
     transform: var(--tw-rotate-x, ) var(--tw-rotate-y, ) var(--tw-rotate-z, ) var(--tw-skew-x, ) var(--tw-skew-y, );
   }
 
+  .cursor-auto {
+    cursor: auto;
+  }
+
   .cursor-none {
     cursor: none;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
   }
 
   .grid-cols-1 {
