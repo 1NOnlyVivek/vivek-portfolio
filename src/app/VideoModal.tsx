@@ -5,19 +5,31 @@ import ReactPlayer from "react-player";
 
 export default function VideoModal({ selectedProject, setSelectedProject }: any) {
   
-  // 1. Clean the URL (removes invisible spaces)
+  // 1. Clean the URL
   const rawUrl = selectedProject?.videoUrl?.trim() || "";
   const safeUrl = rawUrl.startsWith("http") ? rawUrl : (rawUrl ? `https://${rawUrl}` : "");
   
-  // 2. Identify the platform
-  const isYouTube = safeUrl.includes("youtube.com") || safeUrl.includes("youtu.be");
-  const isVimeo = safeUrl.includes("vimeo.com");
-  const isMp4 = safeUrl.endsWith(".mp4");
+  // 2. Extract exactly the 11-character YouTube ID
+  const getYouTubeId = (url: string) => {
+    if (!url) return null;
+    // This regex looks for exactly 11 letters/numbers after the slash
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+    return match ? match[1] : null;
+  };
   
-  // Smart detection for vertical videos (Shorts/Reels)
+  const ytId = getYouTubeId(safeUrl);
+  const isYouTube = !!ytId; // Only true if we successfully grabbed the 11-digit ID
+  
+  // THE MAGIC TRICK: Force ReactPlayer to read Shorts as standard videos so it doesn't crash!
+  const playerUrl = isYouTube ? `https://www.youtube.com/watch?v=${ytId}` : safeUrl;
+  
+  // Detect vertical video formats for the layout shape
   const isShort = safeUrl.includes("shorts/") || safeUrl.includes("reel"); 
   
-  // 3. Fallback for Google Drive, IG, etc.
+  const isVimeo = safeUrl.includes("vimeo.com");
+  const isMp4 = safeUrl.endsWith(".mp4");
+
+  // 3. Fallback for Google Drive, IG, or unrecognized links
   const requiresExternalViewing = !isYouTube && !isVimeo && !isMp4;
 
   return (
@@ -27,8 +39,7 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          // NUCLEAR FIX FOR OVERLAP: Forcing inline z-index
-          style={{ zIndex: 99999 }}
+          style={{ zIndex: 99999 }} // Locks it above the Nav menu
           className="fixed inset-0 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md"
           onClick={() => setSelectedProject(null)}
         >
@@ -58,7 +69,7 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
               </button>
             </div>
 
-            {/* Video Container */}
+            {/* Video Container (Vertical for Shorts, Horizontal for Standard) */}
             <div className={`relative bg-black rounded-xl overflow-hidden shadow-inner flex-shrink-0 ${isShort ? 'w-full max-w-sm mx-auto aspect-[9/16]' : 'w-full aspect-video'}`}>
               {rawUrl ? (
                 requiresExternalViewing ? (
@@ -71,12 +82,12 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
                   </div>
                 ) : (
                   <ReactPlayer
-                    url={safeUrl}
+                    url={playerUrl}
                     width="100%"
                     height="100%"
-                    playing={false} // Crucial for mobile! Let the user tap play.
+                    playing={false}
                     controls={true}
-                    playsinline={true} // Crucial for iPhones!
+                    playsinline={true} // Prevents iOS from forcing it into fullscreen instantly
                     config={{
                       youtube: {
                         playerVars: { playsinline: 1, modestbranding: 1, rel: 0 }

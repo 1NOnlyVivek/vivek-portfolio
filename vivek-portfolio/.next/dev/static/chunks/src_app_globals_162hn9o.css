@@ -520,10 +520,6 @@
     z-index: 300;
   }
 
-  .z-\[999\] {
-    z-index: 999;
-  }
-
   .mx-auto {
     margin-inline: auto;
   }
@@ -989,16 +985,6 @@
   @supports (color: color-mix(in lab, red, red)) {
     .bg-black\/20 {
       background-color: color-mix(in oklab, var(--color-black) 20%, transparent);
-    }
-  }
-
-  .bg-black\/90 {
-    background-color: #000000e6;
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-black\/90 {
-      background-color: color-mix(in oklab, var(--color-black) 90%, transparent);
     }
   }
 
