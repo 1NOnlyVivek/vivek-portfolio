@@ -21,12 +21,11 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
   };
   
   const ytId = extractYtId(rawUrl);
-  const isYouTube = !!ytId;
-  
-  // FORCE strict format so ReactPlayer NEVER shows the grey box
-  const finalPlayerUrl = isYouTube ? `https://www.youtube.com/watch?v=${ytId}` : rawUrl;
+  const isYouTube = !!ytId; // Only true if we got exactly 11 characters
   
   const isVimeo = rawUrl.includes("vimeo.com");
+  const vimeoId = isVimeo ? rawUrl.split("/").pop()?.split("?")[0] : null;
+  
   const isMp4 = rawUrl.endsWith(".mp4");
   const isShort = rawUrl.includes("shorts/") || rawUrl.includes("reel");
 
@@ -80,15 +79,34 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
                     This video is hosted on a platform that blocks embedded playback. Please use the secure link below to view the original video.
                   </p>
                 </div>
+              ) : isYouTube ? (
+                <iframe
+                  // ZERO autoplay. This forces YouTube to render its own native play button and thumbnail!
+                  src={`https://www.youtube.com/embed/${ytId}?rel=0`}
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full bg-black cursor-auto"
+                ></iframe>
+              ) : isVimeo ? (
+                <iframe
+                  src={`https://player.vimeo.com/video/${vimeoId}?rel=0`}
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  allow="fullscreen; picture-in-picture"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full bg-black cursor-auto"
+                ></iframe>
               ) : (
                 <ReactPlayer
-                  url={finalPlayerUrl}
+                  url={rawUrl}
                   width="100%"
                   height="100%"
                   controls={true}
                   playsinline={true}
-                  light={isYouTube ? true : false} // THE SILVER BULLET FOR MOBILE
-                  playing={true} // Safe to use true here because 'light' requires a tap first
                 />
               )
             ) : (
@@ -102,7 +120,7 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
           {rawUrl && (
             <div className="mt-6 flex justify-center">
               <a
-                href={finalPlayerUrl}
+                href={rawUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold tracking-widest uppercase rounded-full transition-colors border border-white/10 flex items-center gap-2 shadow-lg cursor-pointer"
