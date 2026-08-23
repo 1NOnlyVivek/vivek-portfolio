@@ -1,31 +1,23 @@
 // @ts-nocheck
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactPlayer from "react-player";
 
 export default function VideoModal({ selectedProject, setSelectedProject }: any) {
   
-  // 1. Clean the URL
+  // 1. Clean the URL (removes invisible spaces)
   const rawUrl = selectedProject?.videoUrl?.trim() || "";
   const safeUrl = rawUrl.startsWith("http") ? rawUrl : (rawUrl ? `https://${rawUrl}` : "");
   
-  // 2. Extract IDs using a battle-tested YouTube Regex
-  const getYouTubeId = (url: string) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
-    const match = url.match(regExp);
-    // YouTube IDs are ALWAYS exactly 11 characters long. This prevents the homepage bug!
-    return (match && match[2].length === 11) ? match[2] : null;
-  };
-  
-  const ytId = getYouTubeId(safeUrl);
-  const isYouTube = !!ytId;
-  const isShort = safeUrl.includes("shorts/"); 
-  
+  // 2. Identify the platform
+  const isYouTube = safeUrl.includes("youtube.com") || safeUrl.includes("youtu.be");
   const isVimeo = safeUrl.includes("vimeo.com");
-  const vimeoId = isVimeo ? safeUrl.split("/").pop()?.split("?")[0] : null; 
-  
   const isMp4 = safeUrl.endsWith(".mp4");
-
-  // 3. If it's Drive, IG, or a link we can't embed, force external viewing
+  
+  // Smart detection for vertical videos (Shorts/Reels)
+  const isShort = safeUrl.includes("shorts/") || safeUrl.includes("reel"); 
+  
+  // 3. Fallback for Google Drive, IG, etc.
   const requiresExternalViewing = !isYouTube && !isVimeo && !isMp4;
 
   return (
@@ -35,8 +27,9 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          // FIX #1: Z-INDEX 999 forces the modal to sit ABOVE the top menu!
-          className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+          // NUCLEAR FIX FOR OVERLAP: Forcing inline z-index
+          style={{ zIndex: 99999 }}
+          className="fixed inset-0 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md"
           onClick={() => setSelectedProject(null)}
         >
           <motion.div
@@ -76,34 +69,21 @@ export default function VideoModal({ selectedProject, setSelectedProject }: any)
                       This video is hosted on a platform that blocks embedded playback. Please use the secure link below to view the original video.
                     </p>
                   </div>
-                ) : isYouTube ? (
-                  <iframe
-                    src={`https://www.youtube.com/embed/${ytId}?rel=0&playsinline=1`}
+                ) : (
+                  <ReactPlayer
+                    url={safeUrl}
                     width="100%"
                     height="100%"
-                    frameBorder="0"
-                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="absolute top-0 left-0 w-full h-full bg-black"
-                  ></iframe>
-                ) : isVimeo ? (
-                  <iframe
-                    src={`https://player.vimeo.com/video/${vimeoId}?loop=1&autopause=0&playsinline=1`}
-                    width="100%"
-                    height="100%"
-                    frameBorder="0"
-                    allow="fullscreen; picture-in-picture"
-                    allowFullScreen
-                    className="absolute top-0 left-0 w-full h-full bg-black"
-                  ></iframe>
-                ) : isMp4 ? (
-                  <video 
-                    src={safeUrl} 
-                    controls 
-                    playsInline
-                    className="w-full h-full bg-black object-contain"
+                    playing={false} // Crucial for mobile! Let the user tap play.
+                    controls={true}
+                    playsinline={true} // Crucial for iPhones!
+                    config={{
+                      youtube: {
+                        playerVars: { playsinline: 1, modestbranding: 1, rel: 0 }
+                      }
+                    }}
                   />
-                ) : null
+                )
               ) : (
                 <div className="flex items-center justify-center w-full h-full text-zinc-500">
                   No video URL provided.
