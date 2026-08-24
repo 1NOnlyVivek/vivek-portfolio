@@ -26,8 +26,8 @@ const staggerContainer: Variants = {
 };
 
 const imageReveal: Variants = {
-  hidden: { opacity: 0, scale: 0.85, filter: "blur(10px)" },
-  visible: { opacity: 1, scale: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] } }
+  hidden: { opacity: 0, scale: 0.85, filter: "blur(10px)", y: 40 },
+  visible: { opacity: 1, scale: 1, filter: "blur(0px)", y: 0, transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] } }
 };
 
 export default function HomeClient({ projects }: { projects: any[] }) {
@@ -97,7 +97,7 @@ export default function HomeClient({ projects }: { projects: any[] }) {
     { id: "contact", label: "CONTACT" }
   ];
 
-  // Global viewport settings to ensure animations reverse and replay
+  // Re-trigger animations on scroll both up and down
   const viewportSettings = { once: false, amount: 0.15, margin: "0px 0px -10% 0px" };
 
   return (
@@ -136,14 +136,13 @@ export default function HomeClient({ projects }: { projects: any[] }) {
       <section id="home" className="relative w-full min-h-screen flex flex-col justify-center items-center pt-20">
         <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={viewportSettings} className="flex flex-col md:flex-row items-center justify-center w-full max-w-6xl z-10 px-6">
           
-          {/* CV Accurate Hero Shape */}
-          <motion.div variants={imageReveal} className="relative w-64 h-64 md:w-96 md:h-96 flex-shrink-0 mt-12 md:mt-0 group">
-            <div className="absolute inset-0 bg-[#FDB813] rounded-l-[100px] rounded-r-xl overflow-hidden flex justify-center group-hover:scale-[1.02] transition-transform duration-700 ease-out">
-              <img src="/your-portrait.png" alt="Vivek" className="absolute bottom-0 h-[115%] w-auto max-w-none object-contain object-bottom pointer-events-none" />
-            </div>
-            <div className="absolute inset-0 flex justify-center pointer-events-none z-10 group-hover:scale-[1.02] transition-transform duration-700 ease-out" style={{ clipPath: "polygon(-100% -100%, 200% -100%, 200% 50%, -100% 50%)" }}>
-              <img src="/your-portrait.png" alt="Vivek" className="absolute bottom-0 h-[115%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_15px_15px_rgba(0,0,0,0.3)] pointer-events-none" />
-            </div>
+          {/* CV Accurate Hero Shape: Cutout effect */}
+          <motion.div variants={imageReveal} className="relative w-72 h-72 md:w-[450px] md:h-[450px] flex-shrink-0 mt-16 md:mt-0 group">
+            {/* The Background Block */}
+            <div className="absolute inset-x-0 bottom-0 top-16 bg-[#FDB813] rounded-l-[120px] rounded-r-3xl transition-transform duration-700 ease-out group-hover:scale-[1.02] shadow-sm"></div>
+            
+            {/* The Popping Image */}
+            <img src="/your-portrait.png" alt="Vivek" className="absolute bottom-0 h-[120%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_15px_20px_rgba(0,0,0,0.3)] pointer-events-none group-hover:scale-[1.03] group-hover:-translate-y-2 transition-all duration-700 ease-out" />
           </motion.div>
 
           <div className="flex flex-col items-center md:items-start md:ml-12 mt-10 md:mt-0 w-full text-center md:text-left relative">
@@ -152,7 +151,7 @@ export default function HomeClient({ projects }: { projects: any[] }) {
             </motion.div>
 
             <motion.div variants={fadeUp} className="flex flex-col md:flex-row items-center md:items-baseline justify-center md:justify-start gap-0 md:gap-4 overflow-visible w-full mt-2">
-              <h1 className="text-6xl sm:text-7xl md:text-9xl font-black text-[#111111] tracking-tighter uppercase font-impact leading-none flex items-start justify-center md:justify-start">
+              <h1 className="text-6xl sm:text-7xl md:text-[8rem] font-black text-[#111111] tracking-tighter uppercase font-impact leading-none flex items-start justify-center md:justify-start">
                 <span className="text-[#FDB813] text-5xl sm:text-6xl md:text-8xl leading-[0.5] font-serif mr-1 sm:mr-3 mt-2 sm:mt-4 origin-bottom animate-pulse">“</span>
                 PORTFOLIO<span className="text-[#FDB813]">.</span>
               </h1>
@@ -178,14 +177,14 @@ export default function HomeClient({ projects }: { projects: any[] }) {
       <section id="about" className="relative w-full min-h-screen flex flex-col items-center pt-32 px-6">
         <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={viewportSettings} className="grid grid-cols-1 md:grid-cols-2 gap-16 w-full max-w-5xl z-10 mt-10">
           
-          {/* CV Accurate About Shape Layers */}
-          <motion.div variants={imageReveal} className="relative flex flex-col items-center justify-center w-full max-w-sm mx-auto group">
+          {/* CV Accurate About Shape Layers: Cutout effect */}
+          <motion.div variants={imageReveal} className="relative w-64 h-72 md:w-80 md:h-[400px] flex flex-col items-center justify-end mx-auto group mt-12 md:mt-0">
             {/* Background Light Cream Layer */}
-            <div className="absolute inset-0 bg-[#E8E2D5] rounded-[40px] -z-20 -translate-x-4 -translate-y-4 md:-translate-x-8 md:-translate-y-8 transition-transform duration-700 group-hover:-translate-x-6 group-hover:-translate-y-6"></div>
+            <div className="absolute top-0 left-0 w-[85%] h-[85%] bg-[#E8E2D5] rounded-[40px] -z-20 transition-transform duration-700 group-hover:-translate-x-3 group-hover:-translate-y-3"></div>
             {/* Mustard Square Layer */}
-            <div className="absolute w-[85%] h-[85%] bg-[#FDB813] rounded-[40px] -z-10 translate-x-6 translate-y-6 md:translate-x-12 md:translate-y-12 transition-transform duration-700 group-hover:translate-x-10 group-hover:translate-y-10"></div>
+            <div className="absolute bottom-0 right-0 w-[85%] h-[85%] bg-[#FDB813] rounded-[40px] -z-10 transition-transform duration-700 group-hover:translate-x-3 group-hover:translate-y-3"></div>
             {/* Image Layer */}
-            <img src="/your-portrait-2.png" alt="Profile" className="w-full h-auto object-cover rounded-[40px] z-10 shadow-lg grayscale contrast-125 group-hover:grayscale-0 transition-all duration-700" />
+            <img src="/your-portrait-2.png" alt="Profile" className="absolute bottom-0 h-[110%] w-auto object-contain z-10 drop-shadow-xl grayscale contrast-125 group-hover:grayscale-0 group-hover:scale-[1.03] transition-all duration-700" />
           </motion.div>
 
           <div className="flex flex-col justify-center space-y-10">
@@ -212,12 +211,12 @@ export default function HomeClient({ projects }: { projects: any[] }) {
               <div>
                 <h4 className="text-black mb-3 font-black text-lg border-b-2 border-black pb-2 inline-block">Software & Tools</h4>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="w-8 h-8 rounded bg-[#00005c] flex items-center justify-center shadow-md"><img src="/pr-logo.png" alt="PR" className="w-6 h-6 object-cover" /></motion.div>
-                  <motion.div whileHover={{ scale: 1.1, rotate: -5 }} className="w-8 h-8 rounded bg-[#001e36] flex items-center justify-center shadow-md"><img src="/ps-logo.png" alt="PS" className="w-6 h-6 object-cover" /></motion.div>
-                  <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="w-8 h-8 rounded bg-[#00005c] flex items-center justify-center shadow-md"><img src="/ae-logo.png" alt="AE" className="w-6 h-6 object-cover" /></motion.div>
-                  <motion.div whileHover={{ scale: 1.1, rotate: -5 }} className="w-8 h-8 rounded bg-black flex items-center justify-center shadow-md"><img src="/gemini-logo.png" alt="Gemini" className="w-5 h-5 object-cover" /></motion.div>
-                  <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="w-8 h-8 rounded bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center shadow-md"><img src="/canva-logo.png" alt="Canva" className="w-5 h-5 object-cover" /></motion.div>
-                  <motion.div whileHover={{ scale: 1.1, rotate: -5 }} className="w-8 h-8 rounded bg-black flex items-center justify-center shadow-md"><img src="/higgsfield-logo.png" alt="Higgsfield" className="w-5 h-5 object-cover" /></motion.div>
+                  <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="w-8 h-8 rounded bg-[#00005c] flex items-center justify-center shadow-sm"><img src="/pr-logo.png" alt="PR" className="w-6 h-6 object-cover" /></motion.div>
+                  <motion.div whileHover={{ scale: 1.1, rotate: -5 }} className="w-8 h-8 rounded bg-[#001e36] flex items-center justify-center shadow-sm"><img src="/ps-logo.png" alt="PS" className="w-6 h-6 object-cover" /></motion.div>
+                  <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="w-8 h-8 rounded bg-[#00005c] flex items-center justify-center shadow-sm"><img src="/ae-logo.png" alt="AE" className="w-6 h-6 object-cover" /></motion.div>
+                  <motion.div whileHover={{ scale: 1.1, rotate: -5 }} className="w-8 h-8 rounded bg-black flex items-center justify-center shadow-sm"><img src="/gemini-logo.png" alt="Gemini" className="w-5 h-5 object-cover" /></motion.div>
+                  <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="w-8 h-8 rounded bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center shadow-sm"><img src="/canva-logo.png" alt="Canva" className="w-5 h-5 object-cover" /></motion.div>
+                  <motion.div whileHover={{ scale: 1.1, rotate: -5 }} className="w-8 h-8 rounded bg-black flex items-center justify-center shadow-sm"><img src="/higgsfield-logo.png" alt="Higgsfield" className="w-5 h-5 object-cover" /></motion.div>
                 </div>
               </div>
             </motion.div>
@@ -259,7 +258,7 @@ export default function HomeClient({ projects }: { projects: any[] }) {
               <motion.div
                 variants={fadeUp} key={project._id} onClick={() => setSelectedProject(project)}
                 onMouseEnter={() => setIsHoveringProject(true)} onMouseLeave={() => setIsHoveringProject(false)}
-                className="group cursor-none relative rounded-2xl bg-white border-2 border-transparent hover:border-[#FDB813] overflow-hidden aspect-video flex flex-col justify-between transition-all duration-300 shadow-[4px_4px_15px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_30px_rgba(253,184,19,0.3)]"
+                className="group cursor-none relative rounded-2xl bg-white border-2 border-transparent hover:border-[#FDB813] overflow-hidden aspect-video flex flex-col justify-between transition-all duration-300 shadow-[4px_4px_15px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_30px_rgba(253,184,19,0.3)] hover:-translate-y-2"
               >
                 {displayThumbnail && (
                   <div className="absolute inset-0 bg-cover bg-center opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 z-0" style={{ backgroundImage: `url(${displayThumbnail})` }} />
@@ -280,37 +279,52 @@ export default function HomeClient({ projects }: { projects: any[] }) {
         </motion.div>
       </section>
 
-      {/* CONTACT */}
+      {/* CONTACT (REBUILT WITH PILL BUTTONS) */}
       <section id="contact" className="relative w-full min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden pt-20 border-t-2 border-black/5 mt-20">
         <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={viewportSettings} className="grid grid-cols-1 md:grid-cols-2 gap-16 w-full max-w-6xl items-center relative z-10">
           
-          <motion.div variants={imageReveal} className="relative flex flex-col items-center md:items-start w-full">
-            <div className="bg-white p-6 rounded-2xl shadow-[4px_4px_15px_rgba(0,0,0,0.05)] border border-black/10 flex flex-col items-start text-left z-10 w-72 mb-8 md:mb-0 transform transition-transform hover:-translate-y-2 duration-500">
-              <h3 className="font-black text-xl mb-4 text-black">Let's Work Together :</h3>
-              <div className="text-xs font-semibold text-gray-500 flex flex-col gap-3 w-full">
-                <p className="flex items-center gap-2"><span className="text-[#D8B4E2] text-sm">✉</span> bhimajiyanivivek@gmail.com</p>
-                <p className="flex items-center gap-2"><span className="text-gray-500 text-sm">✆</span> +91 9016148014</p>
-                <p className="flex items-center gap-2"><span className="text-gray-500 text-sm">◎</span> @vivek.bhimajiyani</p>
-              </div>
-              <div className="mt-6 w-full pt-4 border-t border-black/10 text-center">
-                 <p className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">Scan or Click</p>
-              </div>
-            </div>
+          <motion.div variants={staggerContainer} className="flex flex-col items-start justify-center gap-5 z-20 w-max mx-auto md:mx-0 py-10">
             
-            <motion.div variants={staggerContainer} className="relative md:absolute md:left-[260px] md:top-[10%] flex flex-col items-start justify-center gap-4 z-20 w-max mx-auto md:mx-0">
-              <motion.a variants={fadeLeft} href="https://www.instagram.com/vivek.bhimajiyani/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-xs font-bold tracking-widest text-black hover:-translate-y-1 transition-all duration-300 bg-white border border-black/10 pr-5 rounded-full shadow-sm hover:shadow-lg hover:border-[#FDB813]">
-                <div className="w-10 h-10 bg-[#FDB813] rounded-full flex items-center justify-center text-black"><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></div>
-                INSTAGRAM
-              </motion.a>
-              <motion.a variants={fadeLeft} href="https://www.youtube.com/@vivek.bhimajiyani" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-xs font-bold tracking-widest text-black hover:-translate-y-1 transition-all duration-300 md:ml-8 bg-white border border-black/10 pr-5 rounded-full shadow-sm hover:shadow-lg hover:border-[#FDB813]">
-                <div className="w-10 h-10 bg-[#FDB813] rounded-full flex items-center justify-center text-black"><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div>
-                YOUTUBE
-              </motion.a>
-              <motion.a variants={fadeLeft} href="https://www.linkedin.com/in/vivek-bhimajiyani-91a8b4304/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-xs font-bold tracking-widest text-black hover:-translate-y-1 transition-all duration-300 md:ml-16 bg-white border border-black/10 pr-5 rounded-full shadow-sm hover:shadow-lg hover:border-[#FDB813]">
-                <div className="w-10 h-10 bg-[#FDB813] rounded-full flex items-center justify-center text-black"><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/></svg></div>
-                LINKEDIN
-              </motion.a>
-            </motion.div>
+            {/* Email Pill */}
+            <motion.a variants={fadeLeft} href="mailto:bhimajiyanivivek@gmail.com" className="flex items-center gap-4 text-xs font-bold tracking-widest text-black hover:-translate-y-1 transition-all duration-300 bg-white border border-black/10 pr-6 rounded-full shadow-[4px_4px_10px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_20px_rgba(253,184,19,0.3)] hover:border-[#FDB813]">
+              <div className="w-12 h-12 bg-[#FDB813] rounded-full flex items-center justify-center text-black">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              </div>
+              EMAIL ME
+            </motion.a>
+
+            {/* Phone Pill */}
+            <motion.a variants={fadeLeft} href="tel:+919016148014" className="flex items-center gap-4 text-xs font-bold tracking-widest text-black hover:-translate-y-1 transition-all duration-300 md:ml-8 bg-white border border-black/10 pr-6 rounded-full shadow-[4px_4px_10px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_20px_rgba(253,184,19,0.3)] hover:border-[#FDB813]">
+              <div className="w-12 h-12 bg-[#FDB813] rounded-full flex items-center justify-center text-black">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </div>
+              PHONE CALL
+            </motion.a>
+
+            {/* Instagram Pill */}
+            <motion.a variants={fadeLeft} href="https://www.instagram.com/vivek.bhimajiyani/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-xs font-bold tracking-widest text-black hover:-translate-y-1 transition-all duration-300 md:ml-16 bg-white border border-black/10 pr-6 rounded-full shadow-[4px_4px_10px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_20px_rgba(253,184,19,0.3)] hover:border-[#FDB813]">
+              <div className="w-12 h-12 bg-[#FDB813] rounded-full flex items-center justify-center text-black">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+              </div>
+              INSTAGRAM
+            </motion.a>
+
+            {/* YouTube Pill */}
+            <motion.a variants={fadeLeft} href="https://www.youtube.com/@vivek.bhimajiyani" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-xs font-bold tracking-widest text-black hover:-translate-y-1 transition-all duration-300 md:ml-24 bg-white border border-black/10 pr-6 rounded-full shadow-[4px_4px_10px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_20px_rgba(253,184,19,0.3)] hover:border-[#FDB813]">
+              <div className="w-12 h-12 bg-[#FDB813] rounded-full flex items-center justify-center text-black">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              </div>
+              YOUTUBE
+            </motion.a>
+
+            {/* LinkedIn Pill */}
+            <motion.a variants={fadeLeft} href="https://www.linkedin.com/in/vivek-bhimajiyani-91a8b4304/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-xs font-bold tracking-widest text-black hover:-translate-y-1 transition-all duration-300 md:ml-32 bg-white border border-black/10 pr-6 rounded-full shadow-[4px_4px_10px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_20px_rgba(253,184,19,0.3)] hover:border-[#FDB813]">
+              <div className="w-12 h-12 bg-[#FDB813] rounded-full flex items-center justify-center text-black">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/></svg>
+              </div>
+              LINKEDIN
+            </motion.a>
+            
           </motion.div>
 
           <div className="text-center md:text-right flex flex-col justify-end mt-12 md:mt-0 font-impact tracking-tighter uppercase leading-[0.85]">
