@@ -17,3 +17,22 @@ body {
   background-color: var(--color-obsidian);
   color: #ffffff;
 }
+/* --- CUSTOM EDITORIAL SCROLLBAR --- */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F0EBE1; /* Matches your cream background */
+  border-left: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #FDB813; /* Mustard Yellow */
+  border-radius: 20px;
+  border: 3px solid #F0EBE1; /* Creates a clean padded look */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #e5a30e; 
+}
